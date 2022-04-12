@@ -4,15 +4,16 @@ using UnityEngine;
 
 public class UpperMoveCamera : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
+    [SerializeField]
+    private float speedCamera;
+    
     void Update()
     {
-        
+        transform.Translate(Vector3.up * speedCamera * Time.deltaTime);
+    }
+
+    public void SetSpeedCamera(float newSpeed)
+    {
+        speedCamera = newSpeed;
     }
 }

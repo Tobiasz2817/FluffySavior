@@ -1,37 +1,35 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
+using Random = UnityEngine.Random;
 
 public class FallingObject : BasicObject
 {
-    [SerializeField]
-    protected float speedItem;
-
-    [SerializeField]
-    protected Vector2 direction;
-
-    protected Vector2 startPos;
-
     void Start()
     {
-        startPos = GetStartPosition();
+        if (randomSpeed)
+        {
+            speedObject = Random.Range(0.5f, 6f);
+        }
+        startPos = GetRandomPosition();
         
-        
+        direction = Vector2.down;
+
         transform.position = startPos;
     }
     void Update()
     {
-        transform.Translate(direction * Time.deltaTime * speedItem);
+        transform.Translate(direction * Time.deltaTime * speedObject);
     }
 
-    private Vector2 GetStartPosition()
+    private void OnTriggerEnter2D(Collider2D col)
     {
-        int x = Random.Range(-10, 10);
-        int y = Random.Range(6, 10);
-
-        Vector2 startPos = new Vector2(x, y);
-
-        return startPos;
+        if (col.CompareTag("Player"))
+        {
+            Debug.Log("I hit player");
+        }
     }
 }

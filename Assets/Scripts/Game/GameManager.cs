@@ -8,7 +8,7 @@ using Object = System.Object;
 
 public class GameManager : MonoBehaviour
 {
-    private int currentRound = 1;
+    /*private int currentRound = 1;*/
     private int numberOfRounds;
     private int averageTimePerRound;
 
@@ -29,8 +29,6 @@ public class GameManager : MonoBehaviour
     {
         numberOfRounds = roundController.Count;
         averageTimePerRound = AverageTimePerRound();
-
-        /*loopRound = StartCoroutine(GamePlay());*/
     }
     
     void Update()
@@ -55,7 +53,6 @@ public class GameManager : MonoBehaviour
                 loopRound = StartCoroutine(GamePlay(i));
                 isSpawning = true;
             }
-            Debug.Log(i);
             Debug.Log($"Current time: {currentTime} AverageTimePerRound: {averageTimePerRound}");
         }
     }
@@ -71,11 +68,6 @@ public class GameManager : MonoBehaviour
             }
         }
         yield return new WaitForSeconds(nextRoundTimer);
-        isSpawning = false;
-    }
-    private IEnumerator timeControl(float time)
-    {
-        yield return new WaitForSeconds(time);
         isSpawning = false;
     }
     public int AverageTimePerRound()

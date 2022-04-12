@@ -94,7 +94,7 @@ public class TimeController : MonoBehaviour
         if(time >= timeToEndCounting)
         {
             if(countTimeText != null)
-                countTimeText.text = minutes + ":" + decimalSeconds + seconds;
+                countTimeText.text = GetTextByTime();
 
             if (decimalSeconds == 0 && seconds == 0)
             {
@@ -127,7 +127,7 @@ public class TimeController : MonoBehaviour
         if(time <= timeToEndCounting)
         {
             if(countTimeText != null)
-                countTimeText.text = minutes + ":" + decimalSeconds + seconds;
+                countTimeText.text = GetTextByTime();
             
 
             if (decimalSeconds == 5 && seconds == 9)
@@ -150,6 +150,22 @@ public class TimeController : MonoBehaviour
             ResetTime();
 
             OnEvent?.Invoke();
+        }
+    }
+
+    private string GetTextByTime()
+    {
+        if (minutes > 0)
+        {
+            return minutes + ":" + decimalSeconds + seconds;
+        }
+        else if(decimalSeconds > 0)
+        {
+            return decimalSeconds + seconds.ToString();
+        }
+        else
+        {
+            return seconds.ToString();
         }
     }
     public void ResetTime()
