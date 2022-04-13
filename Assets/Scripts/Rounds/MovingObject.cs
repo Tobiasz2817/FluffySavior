@@ -15,4 +15,9 @@ public class MovingObject : BasicObject
     {
         
     }
+
+    public override void NewRandomPosition()
+    {
+        Debug.Log("test");
+    }
 }

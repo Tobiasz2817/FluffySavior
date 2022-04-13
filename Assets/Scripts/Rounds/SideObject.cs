@@ -9,5 +9,9 @@ public class SideObject : BasicObject
     {
         
     }
-    
+
+    public override void NewRandomPosition()
+    {
+        Debug.Log("Test");
+    }
 }
