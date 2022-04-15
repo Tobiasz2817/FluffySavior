@@ -7,8 +7,7 @@ public class Poller : MonoBehaviour
 {
     [SerializeField] private List<GameObject> poolObject = new List<GameObject>();
     [SerializeField] private int countObj;
-
-    [SerializeField]
+    
     private float objectDisappearingTime = 3f;
 
     private List<GameObject> myObjects = new List<GameObject>();
@@ -66,7 +65,7 @@ public class Poller : MonoBehaviour
             poolObj.SetActive(false);
         }
     }
-
+    
     public void PoolAllObject()
     {
         int delayCheckGoActive = 0;

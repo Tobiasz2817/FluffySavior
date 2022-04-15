@@ -23,5 +23,9 @@ public class BulletControl : MonoBehaviour
             
             Debug.Log("Booom o podłoge !");
         }
+        else if (col.CompareTag("FallingObj"))
+        {
+            myBulletPoller.PoolObject(gameObject);
+        }
     }
 }

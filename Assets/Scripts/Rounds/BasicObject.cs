@@ -17,6 +17,7 @@ public abstract class BasicObject : MonoBehaviour
     protected bool isMove = false;
     
     protected Vector2 direction;
+    
 
     protected Vector2 GetRandomPosition()
     {
@@ -36,6 +37,19 @@ public abstract class BasicObject : MonoBehaviour
         
 
         return new Vector2(x, y);
+    }
+
+    protected bool IsOnScene(Transform myPosition)
+    {
+        Camera camera = Camera.main;
+        Vector3 pos = camera.ScreenToWorldPoint(new Vector2(camera.pixelWidth,camera.pixelHeight));
+        
+        if(myPosition.position.y < pos.y)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     public abstract void NewRandomPosition();

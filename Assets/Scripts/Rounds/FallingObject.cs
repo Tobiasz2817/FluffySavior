@@ -10,6 +10,7 @@ using Random = UnityEngine.Random;
 public class FallingObject : BasicObject
 {
     private Poller myPoller;
+    
     void Start()
     {
         myPoller = gameObject.GetComponentInParent<Poller>();

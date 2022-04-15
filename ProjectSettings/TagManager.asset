@@ -7,6 +7,8 @@ TagManager:
   - Ground
   - Bullet
   - UpperGround
+  - Wall
+  - FallingObj
   layers:
   - Default
   - TransparentFX

@@ -1,12 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Net.NetworkInformation;
-using UnityEditor.Experimental;
 using UnityEngine;
-using UnityEngine.SocialPlatforms;
 using UnityEngine.UI;
-using Object = System.Object;
+using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
@@ -27,6 +24,7 @@ public class GameManager : MonoBehaviour
 
     private Coroutine loopRound;
     private Coroutine nextRound;
+    private Coroutine polledObjectCoroutine;
 
     public static GameManager Instance { get; private set; }
 
@@ -99,15 +97,21 @@ public class GameManager : MonoBehaviour
             {
                 if (myPoller != null)
                 {
-                    Debug.Log(gamePlayObjects.GetComponent<BasicObject>().name);
-                    GameObject myGo = myPoller.GetObjectByType(gamePlayObjects.GetComponent<BasicObject>().GetType());
-                    if (myGo == null)
+                    float polledTime = 0f;
+                    Type currentType = gamePlayObjects.GetComponent<BasicObject>().GetType();
+                    if (currentType == typeof(FallingObject))
                     {
-                        Debug.Log(" Null ");
-                        break;
+                        polledTime = Random.Range(0f, 4f);
+                        Debug.Log("Falling Obj  time " + polledTime);
                     }
-                    myGo.GetComponent<BasicObject>().NewRandomPosition();
-                    myGo.SetActive(true);
+                    else if (currentType == typeof(IndestructibleObject))
+                    {
+                        polledTime = Random.Range(4f, 5.95f);
+                        
+                        Debug.Log("Indestrucbile time " + polledTime);
+                    }
+
+                    polledObjectCoroutine = StartCoroutine(PollObject(polledTime,currentType));
                 }
             }
         }
@@ -115,8 +119,22 @@ public class GameManager : MonoBehaviour
         isSpawning = false;
     }
 
+    private IEnumerator PollObject(float pollTime, Type type)
+    {
+        yield return new WaitForSeconds(pollTime);
+        GameObject myGo = myPoller.GetObjectByType(type);
+        if (myGo == null)
+        {
+            Debug.Log(" Null ");
+            yield return null;
+        }
+        myGo.GetComponent<BasicObject>().NewRandomPosition();
+        myGo.SetActive(true);
+    }
     private void NextRound()
     {
+        if(polledObjectCoroutine != null)
+            StopCoroutine(polledObjectCoroutine);
         myPoller.PoolAllObject();
         
         nextRound = StartCoroutine(DelayTimeNextRound());
