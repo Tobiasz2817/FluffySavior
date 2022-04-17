@@ -25,7 +25,7 @@ public class FallingObject : BasicObject
     }
     void Update()
     {
-        if(isMove == false)
+        if(isMove == true)
             transform.Translate(direction * Time.deltaTime * speedObject);
     }
 

@@ -15,7 +15,14 @@ public abstract class BasicObject : MonoBehaviour
 
     [SerializeField] 
     protected bool isMove = false;
-    
+
+    public bool IsMove
+    {
+        set => isMove = value;
+        get => isMove;
+    }
+
+
     protected Vector2 direction;
     
 

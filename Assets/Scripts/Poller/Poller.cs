@@ -46,6 +46,34 @@ public class Poller : MonoBehaviour
 
         return null;
     }
+
+    public bool IsSomethingOnScene()
+    {
+        for (int i = 0; i < myObjects.Count; i++)
+        {
+            if (myObjects[i].activeInHierarchy)
+            {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    public void SpeedObjectOnEndRound()
+    {
+        for (int i = 0; i < myObjects.Count; i++)
+        {
+            if (myObjects[i].activeInHierarchy)
+            {
+                if (myObjects[i].GetComponent<BasicObject>().GetType() == typeof(IndestructibleObject))
+                {
+                    if(myObjects[i].GetComponent<IndestructibleObject>().IsMove == false)
+                        myObjects[i].GetComponent<IndestructibleObject>().IsMove = true;
+                }
+            }
+        }
+    }
     public GameObject GetObject()
     {
         for (int i = 0; i < myObjects.Count; i++)

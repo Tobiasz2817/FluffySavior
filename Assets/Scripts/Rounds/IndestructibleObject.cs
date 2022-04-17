@@ -13,7 +13,10 @@ public class IndestructibleObject : BasicObject
     
     void Update()
     {
-        
+        if (isMove)
+        {
+            transform.Translate(Vector2.down * Time.deltaTime * speedObject);
+        }
     }
     private void OnTriggerEnter2D(Collider2D col)
     {

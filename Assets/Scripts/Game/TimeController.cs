@@ -152,7 +152,6 @@ public class TimeController : MonoBehaviour
             OnEvent?.Invoke();
         }
     }
-
     private string GetTextByTime()
     {
         if (minutes > 0)
@@ -191,6 +190,13 @@ public class TimeController : MonoBehaviour
 
         StartCountDownTimer();
 
+    }
+
+    public void AddTimeToEnd(float time)
+    {
+        timeToEndCounting += time;
+        
+        Debug.Log("New Ended time: " + timeToEndCounting);
     }
 
     public int GetActuallyTime()

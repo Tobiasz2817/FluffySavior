@@ -99,7 +99,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   randomSpeed: 1
   speedObject: 3
-  isMove: 0
+  isMove: 1
 --- !u!50 &1519183318855658242
 Rigidbody2D:
   serializedVersion: 4

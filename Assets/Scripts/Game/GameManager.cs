@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.SubsystemsImplementation;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -10,13 +12,15 @@ public class GameManager : MonoBehaviour
 
     /*private int currentRound = 1;*/
     private int numberOfRounds;
-    private int averageTimePerRound;
+    private float averageTimePerRound;
 
     private int i = 0;
     
-    private float currentTime; 
+    private float currentTime;
+    private float nextRoundLostTime = 0f; 
     private float nextRoundTimer = 6f;
     private float roundDelay = 5f;
+    private float regulateTime = 0f;
     
     private bool isSpawning = false;
     private bool isGameOver = false;
@@ -52,14 +56,15 @@ public class GameManager : MonoBehaviour
         if (!isGameOver)
         {
             currentTime = timer.GetActuallyTime();
-            if (currentTime > (averageTimePerRound * (i + 1)))
+            if (currentTime > (((nextRoundLostTime + averageTimePerRound) * (i + 1))) + regulateTime)
             {
                 i++;
                 
                 
                 // Pause for 5 secound
-               
+
                 NextRound();
+                
                 
                 
                 if (i == roundController.Count)
@@ -76,17 +81,12 @@ public class GameManager : MonoBehaviour
                 loopRound = StartCoroutine(GamePlay(i));
                 isSpawning = true;
             }
-            Debug.Log($"Current time: {currentTime} AverageTimePerRound: {averageTimePerRound}");
+            Debug.Log($"Current time: {currentTime} AverageTimePerRound: {averageTimePerRound + nextRoundLostTime}");
+            Debug.Log(" lost time " + nextRoundLostTime);
         }
     }
 
-    private IEnumerator DelayTimeNextRound()
-    {
-        yield return new WaitForSeconds(roundDelay);
-        areNewRoundPause = false;
-        nextRoundGameObject.SetActive(false);
-        StopCoroutine(nextRound);
-    }
+    
 
     private IEnumerator GamePlay(int index)
     {
@@ -97,20 +97,11 @@ public class GameManager : MonoBehaviour
             {
                 if (myPoller != null)
                 {
-                    float polledTime = 0f;
                     Type currentType = gamePlayObjects.GetComponent<BasicObject>().GetType();
-                    if (currentType == typeof(FallingObject))
-                    {
-                        polledTime = Random.Range(0f, 4f);
-                        Debug.Log("Falling Obj  time " + polledTime);
-                    }
-                    else if (currentType == typeof(IndestructibleObject))
-                    {
-                        polledTime = Random.Range(4f, 5.95f);
+                    float polledTime = GetTimePolledByType(currentType);
                         
-                        Debug.Log("Indestrucbile time " + polledTime);
-                    }
-
+                    Debug.Log(" Type " + currentType.Name + " Obj  time " + polledTime);
+                    
                     polledObjectCoroutine = StartCoroutine(PollObject(polledTime,currentType));
                 }
             }
@@ -119,6 +110,17 @@ public class GameManager : MonoBehaviour
         isSpawning = false;
     }
 
+    private float GetTimePolledByType(Type type)
+    {
+        switch (type.ToString())
+        {
+            case "FallingObject":
+                return Random.Range(0f, 4f);
+            case "IndestructibleObject":
+                return Random.Range(4f, 5.95f);
+        }
+        return 0f;
+    }
     private IEnumerator PollObject(float pollTime, Type type)
     {
         yield return new WaitForSeconds(pollTime);
@@ -128,26 +130,64 @@ public class GameManager : MonoBehaviour
             Debug.Log(" Null ");
             yield return null;
         }
+
+        if (type == typeof(IndestructibleObject))
+        {
+            myGo.GetComponent<IndestructibleObject>().IsMove = false;
+        }
         myGo.GetComponent<BasicObject>().NewRandomPosition();
         myGo.SetActive(true);
     }
     private void NextRound()
     {
-        if(polledObjectCoroutine != null)
-            StopCoroutine(polledObjectCoroutine);
+        StopAllCoroutines();
         myPoller.PoolAllObject();
-        
-        nextRound = StartCoroutine(DelayTimeNextRound());
 
-        if (roundDelay <= 5)
-        {
-            roundDelay = 10f;
-        }
+        nextRoundLostTime = 0f;
+        nextRound = StartCoroutine(WaitForEmptyScene());
         
-        nextRoundGameObject.SetActive(true);
-        nextRoundGameObject.GetComponent<Text>().text = "Round " + (i + 1);
-                
+        isSpawning = false;
+    }
+
+    private IEnumerator WaitForEmptyScene()
+    {
         areNewRoundPause = true;
+        myPoller.SpeedObjectOnEndRound();
+        while (true)
+        {
+            if (!myPoller.IsSomethingOnScene())
+            {
+                float value = 0f;
+                if (nextRoundLostTime >= 10f)
+                {
+                    value = float.Parse($"0.{nextRoundLostTime}");
+                }
+                else
+                {
+                    value = float.Parse($"0.0{nextRoundLostTime}");
+                }
+                
+                timer.AddTimeToEnd(value);
+                
+                nextRoundGameObject.SetActive(true);
+                nextRoundGameObject.GetComponent<Text>().text = "Round " + (i + 1);
+
+                nextRound = StartCoroutine(DelayTimeNextRound());
+                break;
+            }
+
+            nextRoundLostTime += 1f;
+            yield return new WaitForSeconds(1f);
+        }
+    }
+    private IEnumerator DelayTimeNextRound()
+    {
+        yield return new WaitForSeconds(roundDelay);
+        areNewRoundPause = false;
+        nextRoundGameObject.SetActive(false);
+        
+        if(nextRound != null)
+            StopCoroutine(nextRound);
     }
     public int AverageTimePerRound()
     {

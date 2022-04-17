@@ -129,8 +129,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   randomSpeed: 0
-  speedObject: 0.5
-  isMove: 1
+  speedObject: 3.5
+  isMove: 0
 --- !u!61 &-590240578051611531
 BoxCollider2D:
   m_ObjectHideFlags: 0
