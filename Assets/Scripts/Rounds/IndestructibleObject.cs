@@ -9,6 +9,8 @@ public class IndestructibleObject : BasicObject
     void Start()
     {
         myPoller = gameObject.GetComponentInParent<Poller>();
+        
+        gameManager = GameManager.Instance;
     }
     
     void Update()
@@ -20,9 +22,13 @@ public class IndestructibleObject : BasicObject
     }
     private void OnTriggerEnter2D(Collider2D col)
     {
+        if (gameManager.isGameOver) return;
+        
         if (col.CompareTag("Player"))
         {
-            Debug.Log("I hit player");
+            gameManager.IsOver();
+            
+            Destroy(col.gameObject);
         }
         else if (col.CompareTag("Bullet"))
         {

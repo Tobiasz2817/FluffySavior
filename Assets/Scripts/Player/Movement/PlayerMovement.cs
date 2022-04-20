@@ -36,9 +36,4 @@ public class PlayerMovement : MonoBehaviour
     {
         inputMovement = callback.ReadValue<Vector2>();
     }
-
-    private void OnTriggerEnter2D(Collider2D col)
-    {
-        Debug.Log(col.name);
-    }
 }

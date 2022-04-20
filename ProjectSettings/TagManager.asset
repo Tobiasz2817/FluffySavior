@@ -9,6 +9,7 @@ TagManager:
   - UpperGround
   - Wall
   - FallingObj
+  - Point
   layers:
   - Default
   - TransparentFX

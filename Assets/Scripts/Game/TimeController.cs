@@ -196,7 +196,7 @@ public class TimeController : MonoBehaviour
     {
         timeToEndCounting += time;
         
-        Debug.Log("New Ended time: " + timeToEndCounting);
+        /*Debug.Log("New Ended time: " + timeToEndCounting);*/
     }
 
     public int GetActuallyTime()

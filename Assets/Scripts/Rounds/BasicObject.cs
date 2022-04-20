@@ -16,6 +16,7 @@ public abstract class BasicObject : MonoBehaviour
     [SerializeField] 
     protected bool isMove = false;
 
+    protected GameManager gameManager;
     public bool IsMove
     {
         set => isMove = value;

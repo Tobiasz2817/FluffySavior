@@ -20,8 +20,6 @@ public class BulletControl : MonoBehaviour
         if (col.CompareTag("UpperGround"))
         {
             myBulletPoller.PoolObject(gameObject);
-            
-            Debug.Log("Booom o podłoge !");
         }
         else if (col.CompareTag("FallingObj"))
         {

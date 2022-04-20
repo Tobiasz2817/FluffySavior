@@ -23,11 +23,14 @@ public class GameManager : MonoBehaviour
     private float regulateTime = 0f;
     
     private bool isSpawning = false;
-    private bool isGameOver = false;
     private bool areNewRoundPause = false;
+    
+    [HideInInspector]
+    public bool isGameOver = false;
 
     private Coroutine loopRound;
     private Coroutine nextRound;
+    private Coroutine delayTime;
     private Coroutine polledObjectCoroutine;
 
     public static GameManager Instance { get; private set; }
@@ -36,7 +39,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TimeController timer;
     [SerializeField] private Poller myPoller;
     [SerializeField] private GameObject nextRoundGameObject;
-
+    [SerializeField] private List<Sprite> currentNumberRoundSprites;
+    
+    [SerializeField] private GameObject winContent;
+    [SerializeField] private GameObject loseContent;
+    
     private void Awake()
     {
         Instance = this;
@@ -56,24 +63,18 @@ public class GameManager : MonoBehaviour
         if (!isGameOver)
         {
             currentTime = timer.GetActuallyTime();
-            if (currentTime > (((nextRoundLostTime + averageTimePerRound) * (i + 1))) + regulateTime)
+            if (currentTime > (nextRoundLostTime + (averageTimePerRound * (i + 1)) + regulateTime))
             {
                 i++;
                 
-                
-                // Pause for 5 secound
-
-                NextRound();
-                
-                
-                
                 if (i == roundController.Count)
                 {
-                    if(loopRound != null)
-                        StopCoroutine(loopRound);
-                    isGameOver = true;
+                    WinRound();
                     return;
                 }
+
+                NextRound();
+
             }
 
             if (!isSpawning && !areNewRoundPause)
@@ -81,8 +82,8 @@ public class GameManager : MonoBehaviour
                 loopRound = StartCoroutine(GamePlay(i));
                 isSpawning = true;
             }
-            Debug.Log($"Current time: {currentTime} AverageTimePerRound: {averageTimePerRound + nextRoundLostTime}");
-            Debug.Log(" lost time " + nextRoundLostTime);
+            /*Debug.Log($"Current time: {currentTime} AverageTimePerRound: {averageTimePerRound + nextRoundLostTime}");
+            Debug.Log(" lost time " + nextRoundLostTime);*/
         }
     }
 
@@ -100,7 +101,7 @@ public class GameManager : MonoBehaviour
                     Type currentType = gamePlayObjects.GetComponent<BasicObject>().GetType();
                     float polledTime = GetTimePolledByType(currentType);
                         
-                    Debug.Log(" Type " + currentType.Name + " Obj  time " + polledTime);
+                    /*Debug.Log(" Type " + currentType.Name + " Obj  time " + polledTime);*/
                     
                     polledObjectCoroutine = StartCoroutine(PollObject(polledTime,currentType));
                 }
@@ -127,7 +128,6 @@ public class GameManager : MonoBehaviour
         GameObject myGo = myPoller.GetObjectByType(type);
         if (myGo == null)
         {
-            Debug.Log(" Null ");
             yield return null;
         }
 
@@ -158,21 +158,18 @@ public class GameManager : MonoBehaviour
             if (!myPoller.IsSomethingOnScene())
             {
                 float value = 0f;
-                if (nextRoundLostTime >= 10f)
-                {
-                    value = float.Parse($"0.{nextRoundLostTime}");
-                }
-                else
-                {
-                    value = float.Parse($"0.0{nextRoundLostTime}");
-                }
+                value = nextRoundLostTime / 100;
                 
                 timer.AddTimeToEnd(value);
                 
                 nextRoundGameObject.SetActive(true);
-                nextRoundGameObject.GetComponent<Text>().text = "Round " + (i + 1);
+                
+                if(i < currentNumberRoundSprites.Count)
+                    nextRoundGameObject.transform.GetChild(0).GetComponent<Image>().sprite = currentNumberRoundSprites[i];
 
-                nextRound = StartCoroutine(DelayTimeNextRound());
+                delayTime = StartCoroutine(DelayTimeNextRound());
+                if(nextRound != null)
+                    StopCoroutine(nextRound);
                 break;
             }
 
@@ -186,13 +183,43 @@ public class GameManager : MonoBehaviour
         areNewRoundPause = false;
         nextRoundGameObject.SetActive(false);
         
-        if(nextRound != null)
-            StopCoroutine(nextRound);
+        if(delayTime != null)
+            StopCoroutine(delayTime);
     }
     public int AverageTimePerRound()
     {
         int endedtime = timer.GetEndedTime();
 
         return endedtime / numberOfRounds;
+    }
+
+    public void WinRound()
+    {
+        StopGame();
+
+        LevelCompletedControl.unlockedMap = 2;
+        
+        Camera.main.gameObject.GetComponent<UpperMoveCamera>().SetSpeedCamera(0f);
+        myPoller.SpeedObjectOnEndRound();
+        
+        winContent.SetActive(true);
+    }
+
+    private void StopGame()
+    {
+        StopAllCoroutines();
+        isGameOver = true;
+    }
+    public void IsOver()
+    {
+        StopGame();
+        
+        if(nextRoundGameObject.activeInHierarchy)
+            nextRoundGameObject.SetActive(false);
+        
+        Camera.main.gameObject.GetComponent<UpperMoveCamera>().SetSpeedCamera(0f);
+        myPoller.SpeedObjectOnEndRound();
+        
+        loseContent.SetActive(true);
     }
 }
