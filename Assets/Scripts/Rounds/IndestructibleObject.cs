@@ -22,9 +22,7 @@ public class IndestructibleObject : BasicObject
     }
     private void OnTriggerEnter2D(Collider2D col)
     {
-        if (gameManager.isGameOver) return;
-        
-        if (col.CompareTag("Player"))
+        if (col.CompareTag("Player") && !gameManager.isGameOver)
         {
             gameManager.EndFirstPlanet();
             

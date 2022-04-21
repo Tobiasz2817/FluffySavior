@@ -71,6 +71,12 @@ public class Poller : MonoBehaviour
                     if(myObjects[i].GetComponent<IndestructibleObject>().IsMove == false)
                         myObjects[i].GetComponent<IndestructibleObject>().IsMove = true;
                 }
+
+                if (myObjects[i].GetComponent<BasicObject>().GetType() == typeof(MovingObject))
+                {
+                    if(myObjects[i].GetComponent<MovingObject>().isMoveDown == false)
+                        myObjects[i].GetComponent<MovingObject>().MoveDown();
+                }
             }
         }
     }
@@ -103,7 +109,7 @@ public class Poller : MonoBehaviour
         {
             if (myObjects[i].activeInHierarchy)
             {
-                if (myObjects[i].transform.position.y > pos.y)
+                if (myObjects[i].transform.position.y > pos.y + 2f)
                 {
                     myObjects[i].SetActive(false);
                 }

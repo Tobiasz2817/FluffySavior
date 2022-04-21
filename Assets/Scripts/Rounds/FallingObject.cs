@@ -1,12 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.Xml;
 using UnityEngine;
-using UnityEngine.InputSystem.LowLevel;
-using UnityEngine.SocialPlatforms;
-using Object = System.Object;
 using Random = UnityEngine.Random;
 
 public class FallingObject : BasicObject
@@ -35,10 +27,8 @@ public class FallingObject : BasicObject
     {
         if (gameManager == null)
         {
-            gameManager = GameManager.Instance;
             return;
         }
-        
         
         if (randomSpeed)
         {
@@ -48,8 +38,6 @@ public class FallingObject : BasicObject
             float max = ((lengthRounds - 1) / 2) + i;
             speedObject = Random.Range(min, max);
         }
-        
-        Debug.LogError("Its work");
     }
 
     void Update()
@@ -60,15 +48,13 @@ public class FallingObject : BasicObject
 
     private void OnTriggerEnter2D(Collider2D col)
     {
-        if (gameManager.isGameOver) return;
-        
-        if (col.CompareTag("Player"))
+        if (col.CompareTag("Player") && !gameManager.isGameOver)
         {
             gameManager.EndFirstPlanet();
             
             Destroy(col.gameObject);
         }
-        else if (col.CompareTag("Bullet"))
+        else if (col.CompareTag("Bullet") && !col.transform.parent.CompareTag("MovingObjBullet") && !gameManager.isGameOver)
         {
             if (pointsPoller == null)
                 return;

@@ -45,7 +45,7 @@ public class PointControl : MonoBehaviour
                 return;
             }
             
-            pointsCollector.EarnPoint(15f);
+            pointsCollector.EarnPoint(valuePoint);
             myPoller.PoolObject(gameObject);
         }
         else if (col.gameObject.CompareTag("Ground"))

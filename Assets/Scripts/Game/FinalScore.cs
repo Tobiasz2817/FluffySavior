@@ -12,8 +12,8 @@ public class FinalScore : MonoBehaviour
     private HorizontalLayoutGroup horizontalLayoutGroup;
     
     private List<GameObject> starsList = new List<GameObject>();
-    
-    
+
+    private GameManager gameManager;
     [SerializeField] 
     private List<int> compartmentResult;
     [SerializeField]
@@ -30,7 +30,12 @@ public class FinalScore : MonoBehaviour
         pointsCollector = FindObjectOfType<PointsCollector>();
         horizontalLayoutGroup = GetComponentInChildren<HorizontalLayoutGroup>();
     }
-    
+
+    private void Start()
+    {
+        gameManager = GameManager.Instance;
+    }
+
     private void OnEnable()
     {
         CalcFinalsScore();
@@ -74,7 +79,7 @@ public class FinalScore : MonoBehaviour
 
     private void ResultNumberOfStars()
     {
-        if (finalStars >= 3)
+        if (finalStars >= 3 && gameManager.isGameOver)
         {
             winContent.SetActive(true);
             LevelCompletedControl.unlockedMap = 2;

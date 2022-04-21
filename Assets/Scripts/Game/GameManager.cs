@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
 using UnityEngine.SubsystemsImplementation;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -36,12 +37,14 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
 
     [SerializeField] private List<RoundController> roundController;
+    [SerializeField] private List<Sprite> currentNumberRoundSprites;
+    
+    [SerializeField] private GameObject nextRoundGameObject;
+    [SerializeField] private GameObject resultEndGame;
+    [SerializeField] private GameObject weaponUpragePickUp;
+
     [SerializeField] private TimeController timer;
     [SerializeField] private Poller myPoller;
-    [SerializeField] private GameObject nextRoundGameObject;
-    [SerializeField] private List<Sprite> currentNumberRoundSprites;
-
-    [SerializeField] private GameObject resultEndGame;
     
     private void Awake()
     {
@@ -66,8 +69,8 @@ public class GameManager : MonoBehaviour
             {
                 i++;
                 
-                if(numberOfRounds > 1)
-                    nextRoundTimer -= i;
+                if(nextRoundTimer > 2)
+                    nextRoundTimer--;
                 
                 if (i == roundController.Count)
                 {
@@ -122,6 +125,8 @@ public class GameManager : MonoBehaviour
                 return Random.Range(0f, 4f);
             case "IndestructibleObject":
                 return Random.Range(4f, 5.95f);
+            case "MovingObject":
+                return Random.Range(12f / i, 8f);
         }
         return 0f;
     }
@@ -185,6 +190,17 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(roundDelay);
         areNewRoundPause = false;
         nextRoundGameObject.SetActive(false);
+        
+        // Resp Key
+        if (i == roundController.Count - 3 || i == roundController.Count - 1)
+        {
+            Camera camera = Camera.main;
+            Vector3 pos = camera.ScreenToWorldPoint(new Vector2(camera.pixelWidth,camera.pixelHeight));
+
+            float X = Random.Range((pos.x * -1) + 2, pos.x - 2);
+            float Y = Random.Range(pos.y + 1, pos.y + 3);
+            Instantiate(weaponUpragePickUp,new Vector2(X,Y),Quaternion.identity);
+        }
         
         if(delayTime != null)
             StopCoroutine(delayTime);

@@ -16,14 +16,25 @@ public class BulletControl : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D col)
     {
         if (myBulletPoller == null) return;
-        
+
         if (col.CompareTag("UpperGround"))
         {
             myBulletPoller.PoolObject(gameObject);
         }
-        else if (col.CompareTag("FallingObj"))
+        else if (col.CompareTag("FallingObj") && !myBulletPoller.CompareTag("MovingObjBullet"))
         {
             myBulletPoller.PoolObject(gameObject);
         }
+        else if (col.CompareTag("MovingObj") && !myBulletPoller.CompareTag("MovingObjBullet"))
+        {
+            myBulletPoller.PoolObject(gameObject);
+        }
+        
+        if (myBulletPoller.CompareTag("MovingObj") && col.CompareTag("Player"))
+        {
+            FindObjectOfType<GameManager>().EndFirstPlanet();
+            Destroy(col.gameObject);
+        }
+        
     }
 }

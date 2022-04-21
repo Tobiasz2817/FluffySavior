@@ -62,8 +62,9 @@ public class PlayerShooting : MonoBehaviour
                     Shoot(rightBulletPoint,Vector2.up);
                     break;
             }
-            
-            Debug.Log(myWeapon);
+
+            isAttack = true;
+            Invoke(nameof(ShootDelayTime),fireRate);
         }
     }
 

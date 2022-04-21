@@ -11,6 +11,8 @@ TagManager:
   - FallingObj
   - Point
   - Key
+  - MovingObj
+  - MovingObjBullet
   layers:
   - Default
   - TransparentFX
