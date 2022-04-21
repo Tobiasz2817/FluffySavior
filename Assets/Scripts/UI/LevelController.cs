@@ -9,10 +9,11 @@ public class LevelController : MonoBehaviour
 
     public void TryPlayButton(string currentIndexMap)
     {
-        if (LevelCompletedControl.unlockedMap <= int.Parse(currentIndexMap))
+        if (int.Parse(currentIndexMap) <= LevelCompletedControl.unlockedMap)
         {
             canPlay.SetActive(true);
             
+            Debug.Log(LevelCompletedControl.unlockedMap);
             return;
         }
 

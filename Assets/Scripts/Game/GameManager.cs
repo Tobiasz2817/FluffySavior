@@ -40,9 +40,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Poller myPoller;
     [SerializeField] private GameObject nextRoundGameObject;
     [SerializeField] private List<Sprite> currentNumberRoundSprites;
-    
-    [SerializeField] private GameObject winContent;
-    [SerializeField] private GameObject loseContent;
+
+    [SerializeField] private GameObject resultEndGame;
     
     private void Awake()
     {
@@ -67,9 +66,12 @@ public class GameManager : MonoBehaviour
             {
                 i++;
                 
+                if(numberOfRounds > 1)
+                    nextRoundTimer -= i;
+                
                 if (i == roundController.Count)
                 {
-                    WinRound();
+                    EndFirstPlanet();
                     return;
                 }
 
@@ -84,6 +86,7 @@ public class GameManager : MonoBehaviour
             }
             /*Debug.Log($"Current time: {currentTime} AverageTimePerRound: {averageTimePerRound + nextRoundLostTime}");
             Debug.Log(" lost time " + nextRoundLostTime);*/
+            /*Debug.Log(" Number of rounds " + nextRoundTimer);*/
         }
     }
 
@@ -186,31 +189,19 @@ public class GameManager : MonoBehaviour
         if(delayTime != null)
             StopCoroutine(delayTime);
     }
+
     public int AverageTimePerRound()
     {
         int endedtime = timer.GetEndedTime();
 
         return endedtime / numberOfRounds;
     }
-
-    public void WinRound()
-    {
-        StopGame();
-
-        LevelCompletedControl.unlockedMap = 2;
-        
-        Camera.main.gameObject.GetComponent<UpperMoveCamera>().SetSpeedCamera(0f);
-        myPoller.SpeedObjectOnEndRound();
-        
-        winContent.SetActive(true);
-    }
-
     private void StopGame()
     {
         StopAllCoroutines();
         isGameOver = true;
     }
-    public void IsOver()
+    public void EndFirstPlanet()
     {
         StopGame();
         
@@ -220,6 +211,16 @@ public class GameManager : MonoBehaviour
         Camera.main.gameObject.GetComponent<UpperMoveCamera>().SetSpeedCamera(0f);
         myPoller.SpeedObjectOnEndRound();
         
-        loseContent.SetActive(true);
+        resultEndGame.SetActive(true);
+    }
+
+    public int GetCurrentIndex()
+    {
+        return i;
+    }
+
+    public int GetLengthRounds()
+    {
+        return roundController.Count;
     }
 }

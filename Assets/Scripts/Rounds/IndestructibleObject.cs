@@ -26,7 +26,7 @@ public class IndestructibleObject : BasicObject
         
         if (col.CompareTag("Player"))
         {
-            gameManager.IsOver();
+            gameManager.EndFirstPlanet();
             
             Destroy(col.gameObject);
         }

@@ -17,9 +17,14 @@ public class PlayerController : MonoBehaviour
     {
         if (col.CompareTag("Ground") || col.CompareTag("UpperGround"))
         {
-            gameManager.IsOver();
+            gameManager.EndFirstPlanet();
             
             Destroy(gameObject);
+        }
+        else if (col.CompareTag("Key"))
+        {
+            GetComponent<PlayerShooting>().UpgradeWeapon();
+            Destroy(col.gameObject);
         }
         
     }

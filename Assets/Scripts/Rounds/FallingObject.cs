@@ -14,21 +14,44 @@ public class FallingObject : BasicObject
     private Poller myPoller;
     private Poller pointsPoller;
 
+    private const int constSpeed = 6;
+    private float lengthRounds = 0f;
+    private int i = 1;
     void Start()
     {
-        myPoller = gameObject.GetComponentInParent<Poller>();
         gameManager = GameManager.Instance;
+        
+        lengthRounds = gameManager.GetLengthRounds();
+        
+        myPoller = gameObject.GetComponentInParent<Poller>();
 
         pointsPoller = GameObject.Find("PollerPoints").GetComponent<Poller>();
         
-        if (randomSpeed)
-        {
-            speedObject = Random.Range(0.5f, 6f);
-        }
-
         direction = Vector2.down;
         
     }
+
+    private void OnEnable()
+    {
+        if (gameManager == null)
+        {
+            gameManager = GameManager.Instance;
+            return;
+        }
+        
+        
+        if (randomSpeed)
+        {
+            i = gameManager.GetCurrentIndex();
+
+            float min = i - 0.5f;
+            float max = ((lengthRounds - 1) / 2) + i;
+            speedObject = Random.Range(min, max);
+        }
+        
+        Debug.LogError("Its work");
+    }
+
     void Update()
     {
         if(isMove == true)
@@ -41,7 +64,7 @@ public class FallingObject : BasicObject
         
         if (col.CompareTag("Player"))
         {
-            gameManager.IsOver();
+            gameManager.EndFirstPlanet();
             
             Destroy(col.gameObject);
         }

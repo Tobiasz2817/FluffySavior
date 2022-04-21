@@ -10,6 +10,7 @@ TagManager:
   - Wall
   - FallingObj
   - Point
+  - Key
   layers:
   - Default
   - TransparentFX
